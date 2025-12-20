@@ -2,13 +2,13 @@
 
 Simulation de Radar Passif sur signaux satellitaires
 
-L'objectif ici est de modéliser une chaîne complète de détection radar passive qui exploite les signaux d'opportunité émis par des constellations de satellites en orbite basse (type OneWeb ou Starlink) pour repérer une cible. C'est une simulation dont le but est notamment de visualiser comment on peut extraire un écho radar très faible noyé dans le bruit et les interférences directes des satellites.
+L'objectif ici est de modéliser une chaîne complète de détection radar passive qui exploite les signaux d'opportunité émis par des constellations de satellites en orbite basse pour repérer une cible. C'est une simulation dont le but est notamment de visualiser comment on peut extraire un écho radar très faible noyé dans le bruit et les interférences directes des satellites.
 
 Comprendre l'architecture :
 
 Pour mieux saisir comment les différents scripts interagissent, voici le schéma global du fonctionnement de la simulation.
 
-Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation "hors ligne" où nous calculons toute la physique du scénario (la trajectoire de l'avion et des satellites). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
+Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation où nous calculons toute la physique du scénario (la trajectoire de la cible et des satellites ainsi que que le calcul de la géométrie bistatique associée). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
 
 La seconde phase est le cœur du système : c'est la boucle de simulation temporelle. À chaque instant, nous générons les signaux électromagnétiques bruts (mélange des signaux satellites, échos, bruit thermique), puis nous les passons dans notre module de traitement du signal. Ce module effectue la synchronisation, le nettoyage des interférences via l'algorithme ECA, et enfin le calcul de la corrélation croisée (CAF) pour détecter la cible.
 Installation et configuration
