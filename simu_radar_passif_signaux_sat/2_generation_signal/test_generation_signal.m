@@ -92,7 +92,7 @@ xlabel('Fréquence (MHz)');
 ylabel('Puissance (dB)');        
 grid on;
 
-% 4. Amplitude Temporelle (Le test ultime)
+% 4. Amplitude Temporelle
 subplot(2,2,4);
 idx_zoom = 100:200;
 % On compare les amplitudes normalisées pour voir les variations relatives
@@ -106,3 +106,4 @@ grid on;
 
 
 fprintf('--- TOUS LES TESTS SONT PASSÉS ---\n');
+
