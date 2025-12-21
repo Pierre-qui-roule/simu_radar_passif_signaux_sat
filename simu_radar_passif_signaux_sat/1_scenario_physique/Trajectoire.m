@@ -90,4 +90,5 @@ env_data.numSats   = numSats;
 %% 4. Export des Données
 filename = 'donnees_scenario.mat';
 save(filename, 'env_data');
-fprintf('✅ Succès : Données sauvegardées dans "%s"\n', filename);
+fprintf('Succès : Données sauvegardées dans "%s"\n', filename);
+
