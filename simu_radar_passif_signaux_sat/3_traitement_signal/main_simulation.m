@@ -1,4 +1,4 @@
-%% MAIN SIMULATION : Radar Passif OneWeb (Visualisation Pédagogique)
+%% MAIN SIMULATION : Radar Passif OneWeb 
 clear; clc; close all;
 
 fprintf('======================================================\n');
@@ -29,12 +29,14 @@ indices_temps = 1 : round(1.0/dt_simu) : length(env_data.time); % Pas de 1 secon
 
 for k = indices_temps
     t_actuel = env_data.time(k);
-    fprintf('\n⏱️ T = %.2f s ... ', t_actuel);
+    fprintf('\nT = %.2f s ... ', t_actuel);
     
     % A. SCÈNE
     [S_surv, S_refs] = generer_scene_complete(Geom, k, params);
     
     % B. TRAITEMENT
+    mesures_sats_pos = []; % Pour stocker la position des sats qui ont détecté
+    mesures_ranges   = []; % Pour stocker les distances mesurées
     for iSat = 1:env_data.numSats
         Sig_Ref = S_refs(:, iSat);
         Sig_Surv = S_surv.';
@@ -79,22 +81,40 @@ for k = indices_temps
             view(2); shading flat; colorbar;
             title('3. CAF Nettoyée (Avec ECA)'); ylabel('Dist (km)'); xlabel('Doppler (kHz)');
             
-            % Graphe 4 : Zoom 3D sur la cible
+            % --- Graphe 4 : Visualisation 3D (CORRIGÉ) ---
             subplot(2,2,4);
-            % On masque le zéro pour le zoom (suppression visuelle du résidu direct)
-            CAF_Zoom = CAF_Propre;
-            mask_zero = abs(tau_ax/params.Fs*3e8) < 2000; % Masque < 2km
-            CAF_Zoom(mask_zero, :) = min(CAF_Zoom(:));
             
-            surf(fd_ax/1000, tau_ax/params.Fs*3e8/1000, CAF_Zoom);
-            shading interp; title('4. Zoom Cible (3D)'); 
-            zlabel('Amplitude (dB)'); xlim([-10 10]); ylim([50 150]); % Zoom zone avion
-            view(-45, 45); % Vue 3D sympa
+            % 1. On prépare les axes X et Y pour la 3D
+            % Doppler en kHz / Distance en km (formule physique exacte)
+            [X_dop, Y_dist] = meshgrid(fd_ax/1000, tau_ax/params.Fs*299792458/1000);
+            
+            % 2. On affiche la CAF Propre directement (Plus besoin de CAF_Zoom)
+            mesh(X_dop, Y_dist, CAF_Propre); 
+            
+            % 3. Esthétique
+            title('4. CAF 3D (Distance/Doppler)'); 
+            xlabel('Doppler (kHz)'); 
+            ylabel('Distance (km)');
+            zlabel('Amplitude (dB)');
+            
+            view(45, 30);       % Angle de vue
+            shading interp;     % Lissage des couleurs
+            colormap('jet');    
+            colorbar;
+            
+            % 4. Zoom vertical intelligent (Pour voir le pic et ignorer le fond)
+            max_val = max(CAF_Propre(:));
+            zlim([max_val-60, max_val]); 
+            
+            % 5. Zoom horizontal (Focus sur la zone utile)
+            ylim([0 150]);      % Distance 0 à 150 km
+            xlim([-10 10]);     % Doppler +/- 10 kHz
             
             drawnow;
             
             % Pour la détection, on utilise le résultat propre
             CAF_Finale = CAF_Propre;
+
         else
             % Pour les autres sats, calcul standard unique (ECA activé)
             [CAF_Finale, tau_ax, fd_ax] = traitement_signal(Sig_Ref, Sig_Surv, params.Fs, T_CPI, ones(size(Sig_Ref)), 20, 0.5, Max_Lag, Max_Dop);
@@ -103,7 +123,7 @@ for k = indices_temps
         % --- DÉTECTION INTELLIGENTE ---
         % On masque physiquement la zone autour de 0 km (Résidu Direct)
         dist_vec = tau_ax/params.Fs*299792458;
-        mask_direct = abs(dist_vec) < 3000; % On ignore tout ce qui est < 3km
+        mask_direct = abs(dist_vec) < 20000; % On ignore tout ce qui est < 20km
         CAF_Finale(mask_direct, :) = -200; % On écrase le zéro
         
         [max_val, idx_max] = max(CAF_Finale(:));
@@ -116,8 +136,41 @@ for k = indices_temps
             
             fprintf('[Sat %d : DETECTÉ à %.1f km] ', iSat, z_range/1000);
             Tracks{iSat} = [Tracks{iSat}; [t_actuel, z_range, z_doppler]];
+
+            mesures_sats_pos = [mesures_sats_pos, env_data.Traj_Sats(:, k, iSat)];
+            mesures_ranges   = [mesures_ranges, z_range];
         end
     end
+
+    % --- CALCUL DE LA POSITION 3D (Multilatération) ---
+    % Il faut au moins 3 satellites pour trouver (x,y,z)
+    if length(mesures_ranges) >= 3
+        fprintf(' -> Calcul 3D en cours...');
+        Pos_Estimee = calcul_position_cible(env_data.Pos_Rx, mesures_sats_pos, mesures_ranges);
+        
+        fprintf('Position trouvée : X=%.1f km, Y=%.1f km, Z=%.1f km\n', ...
+            Pos_Estimee(1)/1000, Pos_Estimee(2)/1000, Pos_Estimee(3)/1000);
+            
+    else
+        fprintf('\n Pas assez de satellites pour localiser en 3D (%d/3).\n', length(mesures_ranges));
+    end
+    
+    % --- DIAGNOSTIC & CALCUL 3D ---
+    fprintf(' -> Détections valides ce tour : %d / %d sats\n', length(mesures_ranges), env_data.numSats);
+    
+    if length(mesures_ranges) >= 3
+        fprintf('Calcul 3D en cours...\n');
+        Pos_Estimee = calcul_position_cible(env_data.Pos_Rx, mesures_sats_pos, mesures_ranges);
+        
+        fprintf('POSITION CIBLE : X=%.1f km, Y=%.1f km, Z=%.1f km\n', ...
+            Pos_Estimee(1)/1000, Pos_Estimee(2)/1000, Pos_Estimee(3)/1000);
+    else
+        fprintf('Pas assez de satellites pour localiser en 3D (Besoin de 3).\n');
+    end
+
+    % --- UPDATE TRACKING ---
+    set(0, 'CurrentFigure', fig_track);
+    % ... (reste du code)
     
     % --- UPDATE TRACKING ---
     set(0, 'CurrentFigure', fig_track);
