@@ -34,7 +34,7 @@ Ensuite, exécutez `calcul_geometrie.m`. Ce programme reprend les positions gén
 
 Une fois ces deux étapes de préparation terminées, il est possible de lancer `test_generation_signal.m`. C'est un script de validation qui permet de vérifier que la génération des signaux est réaliste avant de lancer la grosse simulation. Il va générer des graphiques comme celui ci-dessous :
 
-![Validation Signal](images/image_0a4b3e.png)
+![Validation Signal](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
 
 Ce test visuel est rassurant : on y voit à gauche la constellation QPSK propre du satellite source (le carré bleu), et à droite le signal mélangé reçu par l'antenne (le nuage rouge), qui montre bien que le signal utile est totalement noyé dans le bruit et les interférences des autres satellites. C'est tout le défi du traitement qui va suivre.
 
