@@ -1,6 +1,4 @@
 function [S_surv_Total, S_ref_Sats] = generer_scene_complete(Geom, i_time, params)
-% V2 : La référence de sortie est maintenant le TRAJET DIRECT (pas la source)
-% Cela permet à l'ECA de fonctionner correctement.
 
     Fs = params.Fs;
     fc = params.fc;
@@ -29,7 +27,7 @@ function [S_surv_Total, S_ref_Sats] = generer_scene_complete(Geom, i_time, param
         % C. Trajet Écho (Cible)
         tau_echo = Geom.Dist_Cible(i_time, i) / 3e8;
         dop_bist = Geom.Doppler_Bistatic(i_time, i);
-        Att_Echo = 160; % Atténuation écho (Cible faible)
+        Att_Echo = 140; % Atténuation écho (Cible faible)
         
         S_Echo = creerSignal_BB(S_source_long, tau_echo, dop_bist, Att_Echo, Fs, fc, N_snap);
         
@@ -47,4 +45,5 @@ function [S_surv_Total, S_ref_Sats] = generer_scene_complete(Geom, i_time, param
     Bruit = (randn(1, N_snap) + 1j*randn(1, N_snap)) / sqrt(2);
     lvl_bruit = 10^(-110/20); 
     S_surv_Total = S_surv_Total + Bruit * lvl_bruit;
+
 end
