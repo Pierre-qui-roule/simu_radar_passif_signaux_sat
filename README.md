@@ -8,11 +8,30 @@ L'objectif ici est de modéliser une chaîne complète de détection radar passi
 
 Pour mieux saisir comment les différents scripts interagissent, voici le schéma global du fonctionnement de la simulation.
 
-![Architecture de la Simulation](simu_radar_passif_signaux_sat/images/schéma_fonctionnement_simu.png)
+![Architecture de la Simulation](simu_radar_passif_signaux_sat/images/test_generation_signaux_graphes.png)
 
 Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation où nous calculons toute la physique du scénario (la trajectoire de la cible et des satellites ainsi que que le calcul de la géométrie bistatique associée). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
 
 La seconde phase est le cœur du système : c'est la boucle de simulation temporelle. À chaque instant, nous générons les signaux électromagnétiques bruts (mélange des signaux satellites, échos, bruit thermique), puis nous les passons dans notre module de traitement du signal. Ce module effectue la synchronisation, le nettoyage des interférences via l'algorithme ECA, et enfin le calcul de la corrélation croisée (CAF) pour détecter la cible.
+
+### Hypothèses Simplificatrices du Modèle
+
+* La Terre est modélisée comme une sphère parfaite de rayon 6371 km, sans prise en compte de la rotation terrestre durant le temps d'intégration.
+* La propagation des ondes s'effectue en espace libre, ignorant les atténuations atmosphériques et les trajets multiples parasites venant du sol (clutter).
+* La cible est considérée comme un point unique isotrope avec une Surface Équivalente Radar constante (pas de fluctuation).
+* On applique l'approximation Stop-and-Hop, considérant que la cible et les satellites sont figés durant le temps de trajet de l'onde.
+* On suppose disposer au niveau du récepteur d'une copie propre et à fort SNR du signal direct du satellite visé, exempte de pollution par les échos.
+* Les gains d'antenne sont considérés constants dans la direction de visée.
+
+### Paramètres Clés de la Simulation
+
+* Source d'opportunité : Constellation de satellites en orbite basse (LEO) type OneWeb (altitude 1200 km).
+* Nature du signal : Signal IQ généré directement en Bande de Base avec une modulation QPSK aléatoire.
+* Nombre d'émetteurs : 5 satellites suivis simultanément pour la multilatération.
+* Bande passante du signal : 240 MHz.
+* Fréquence Porteuse : 11.7 GHz (Bande Ku).
+* Scénario de Puissance : Simulation d'une forte dynamique entre le trajet direct (atténuation 100 dB) et le trajet écho (atténuation 160 dB).
+* Géométrie : Cible aérienne évoluant à une distance bistatique comprise entre 80 km et 150 km.
 
 **Installation et configuration**
 
@@ -65,6 +84,8 @@ En conséquence, l'étape de tracking ne peut pas fonctionner correctement. Le d
 ![Tracking](simu_radar_passif_signaux_sat/images/image_tracking.png)
 
 Pour améliorer ces performances dans une version future, l'effort devrait se concentrer sur le perfectionnement du nettoyage du signal de référence. L'utilisation d'un filtre adaptatif plus complexe, tel qu'un filtre RLS (Recursive Least Squares) ou l'augmentation significative de l'ordre du filtre ECA, permettrait de creuser davantage sous le plancher de bruit. De plus, l'implémentation d'un détecteur CFAR (Constant False Alarm Rate) plus robuste permettrait d'ignorer dynamiquement les zones de forte interférence pour aller chercher les pics plus faibles mais cohérents de la cible réelle.
+
+
 
 
 
