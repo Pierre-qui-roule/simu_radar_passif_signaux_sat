@@ -8,7 +8,7 @@ L'objectif ici est de modéliser une chaîne complète de détection radar passi
 
 Pour mieux saisir comment les différents scripts interagissent, voici le schéma global du fonctionnement de la simulation.
 
-![Architecture de la Simulation](simu_radar_passif_signaux_sat/schéma_fonctionnement_simu.png)
+![Architecture de la Simulation](simu_radar_passif_signaux_sat/images/schéma_fonctionnement_simu.png)
 
 Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation où nous calculons toute la physique du scénario (la trajectoire de la cible et des satellites ainsi que que le calcul de la géométrie bistatique associée). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
 
@@ -34,7 +34,7 @@ Ensuite, exécutez `calcul_geometrie.m`. Ce programme reprend les positions gén
 
 Une fois ces deux étapes de préparation terminées, il est possible de lancer `test_generation_signal.m`. C'est un script de validation qui permet de vérifier que la génération des signaux est réaliste avant de lancer la grosse simulation. Il va générer des graphiques comme celui ci-dessous :
 
-![Validation Signal](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
+![Validation Signal](simu_radar_passif_signaux_sat/images/test_generation_simulation.png)
 
 Ce test visuel est rassurant : on y voit à gauche la constellation QPSK propre du satellite source (le carré bleu), et à droite le signal mélangé reçu par l'antenne (le nuage rouge), qui montre bien que le signal utile est totalement noyé dans le bruit et les interférences des autres satellites. C'est tout le défi du traitement qui va suivre.
 
@@ -58,11 +58,11 @@ La simulation parvient à générer un scénario cohérent, incluant la trajecto
 
 Le principal problème se situe au niveau de l'algorithme d'annulation des interférences (ECA). Bien que ce filtre soit conçu pour projeter le signal de surveillance dans un sous-espace orthogonal au signal de référence, son implémentation actuelle ne parvient pas à supprimer totalement les lobes secondaires du signal direct. Il reste un résidu de puissance, visible sous la forme d'un bloc dense sur les graphiques, qui est supérieur au niveau de puissance de la cible. Le radar détecte donc ce bruit résiduel comme étant des cibles potentielles, ce qui engendre des fausses alarmes et empêche la détection de l'avion situé plus loin.
 
-![CAF obtenue](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
+![CAF obtenue](simu_radar_passif_signaux_sat/images/image_CAF.png)
 
 En conséquence, l'étape de tracking ne peut pas fonctionner correctement. Le détecteur extrait les pics d'énergie correspondant aux résidus d'interférence au lieu de l'écho de l'avion. Ces fausses détections étant aléatoires et incohérentes d'un satellite à l'autre, l'algorithme de multilatération géométrique ne peut pas trouver d'intersection commune aux ellipsoïdes de distance. C'est la raison pour laquelle le positionnement 3D de la cible n'aboutit pas et que les graphes de suivi montrent des points dispersés à courte distance.
 
-![Tracking](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
+![Tracking](simu_radar_passif_signaux_sat/images/image_tracking.png)
 
 Pour améliorer ces performances dans une version future, l'effort devrait se concentrer sur le perfectionnement du nettoyage du signal de référence. L'utilisation d'un filtre adaptatif plus complexe, tel qu'un filtre RLS (Recursive Least Squares) ou l'augmentation significative de l'ordre du filtre ECA, permettrait de creuser davantage sous le plancher de bruit. De plus, l'implémentation d'un détecteur CFAR (Constant False Alarm Rate) plus robuste permettrait d'ignorer dynamiquement les zones de forte interférence pour aller chercher les pics plus faibles mais cohérents de la cible réelle.
 
