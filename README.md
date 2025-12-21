@@ -50,7 +50,21 @@ Enfin, pour voir le radar en action, `lancez main_simulation.m`. C'est le chef d
 
 `traitement_signal.m` constitue le cerveau du radar qui analyse les données reçues pour extraire l'information. Il réalise successivement la compensation de la vitesse du satellite, le nettoyage du signal direct via le filtre ECA et enfin le calcul de la corrélation croisée. Son rôle final est de produire une carte en deux dimensions où l'énergie de la cible ressort sous forme d'un pic visible, indiquant sa distance et sa vitesse.
 
+`calcul_position_cible.m` est l'outil mathématique qui transforme les mesures brutes du radar en une localisation géographique concrète. Il prend en entrée les distances bistatiques détectées par au moins trois satellites différents ainsi que leurs positions orbitales exactes à cet instant. Comme l'intersection de plusieurs ellipsoïdes dans l'espace est complexe à résoudre par une simple équation, ce script utilise un algorithme d'optimisation qui teste intelligemment plusieurs positions possibles jusqu'à trouver celle qui correspond le mieux à toutes les mesures simultanément. Son utilité est donc de convertir une série de retards temporels abstraits en coordonnées X, Y et Z précises, permettant de passer d'une simple détection de présence à un positionnement réel de l'avion dans l'espace.
+
 **Analyse des résultats :**
+
+La simulation parvient à générer un scénario cohérent, incluant la trajectoire des satellites, la géométrie bistatique et la synthèse des signaux IQ. Cependant, les résultats obtenus en sortie de chaîne de traitement mettent en évidence la difficulté majeure du radar passif, à savoir la gestion de l'interférence du trajet direct. Actuellement, le signal reçu directement depuis le satellite est plusieurs ordres de grandeur plus puissant que l'écho réfléchi par la cible, créant un effet de masquage important sur les soixante premiers kilomètres de la carte distance-Doppler.
+
+Le principal problème se situe au niveau de l'algorithme d'annulation des interférences (ECA). Bien que ce filtre soit conçu pour projeter le signal de surveillance dans un sous-espace orthogonal au signal de référence, son implémentation actuelle ne parvient pas à supprimer totalement les lobes secondaires du signal direct. Il reste un résidu de puissance, visible sous la forme d'un bloc dense sur les graphiques, qui est supérieur au niveau de puissance de la cible. Le radar détecte donc ce bruit résiduel comme étant des cibles potentielles, ce qui engendre des fausses alarmes et empêche la détection de l'avion situé plus loin.
+
+![CAF obtenue](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
+
+En conséquence, l'étape de tracking ne peut pas fonctionner correctement. Le détecteur extrait les pics d'énergie correspondant aux résidus d'interférence au lieu de l'écho de l'avion. Ces fausses détections étant aléatoires et incohérentes d'un satellite à l'autre, l'algorithme de multilatération géométrique ne peut pas trouver d'intersection commune aux ellipsoïdes de distance. C'est la raison pour laquelle le positionnement 3D de la cible n'aboutit pas et que les graphes de suivi montrent des points dispersés à courte distance.
+
+![Tracking](simu_radar_passif_signaux_sat/test_generation_signaux_graphes.png)
+
+Pour améliorer ces performances dans une version future, l'effort devrait se concentrer sur le perfectionnement du nettoyage du signal de référence. L'utilisation d'un filtre adaptatif plus complexe, tel qu'un filtre RLS (Recursive Least Squares) ou l'augmentation significative de l'ordre du filtre ECA, permettrait de creuser davantage sous le plancher de bruit. De plus, l'implémentation d'un détecteur CFAR (Constant False Alarm Rate) plus robuste permettrait d'ignorer dynamiquement les zones de forte interférence pour aller chercher les pics plus faibles mais cohérents de la cible réelle.
 
 
 
