@@ -50,4 +50,8 @@ Enfin, pour voir le radar en action, `lancez main_simulation.m`. C'est le chef d
 
 `traitement_signal.m` constitue le cerveau du radar qui analyse les données reçues pour extraire l'information. Il réalise successivement la compensation de la vitesse du satellite, le nettoyage du signal direct via le filtre ECA et enfin le calcul de la corrélation croisée. Son rôle final est de produire une carte en deux dimensions où l'énergie de la cible ressort sous forme d'un pic visible, indiquant sa distance et sa vitesse.
 
+**Analyse des résultats :**
+
+
+
 
