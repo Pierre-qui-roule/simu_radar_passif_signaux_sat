@@ -20,21 +20,21 @@ Si vous récupérez ce projet depuis GitHub, la procédure pour le faire fonctio
 
 Pour que la simulation fonctionne, il est impératif de respecter un ordre précis d'exécution des programmes. En effet, chaque étape dépend des données calculées par la précédente.
 
-<u>Pour tout lancer d'un coup :</u>
+**Pour tout lancer d'un coup :</u>**
 
 Si vous voulez tout lancer ou relancer de zéro sans vous soucier de l'ordre, vous pouvez aussi simplement exécuter le script TOUT_LANCER.m qui automatisera toute la séquence pour vous.
 
-<u>Pour lancer les programmes un à un et les voir fonctionner individuellement :</u>
+**Pour lancer les programmes un à un et les voir fonctionner individuellement :**
 
-Vous devez commencer par lancer le script Trajectoire.m. Son rôle est de mettre en place le décor : il définit la position du récepteur au sol, simule le mouvement de la constellation de satellites et fait voler l'avion cible à travers la scène. Il va créer un fichier de données contenant toutes ces coordonnées. Si vous voulez visualiser spécifiquement les trajectoires générées vous pouvez lancer `Trajectoire_visu.m`.
+Vous devez commencer par lancer le script `Trajectoire.m`. Son rôle est de mettre en place le décor : il définit la position du récepteur au sol, simule le mouvement de la constellation de satellites et fait voler l'avion cible à travers la scène. Il va créer un fichier de données contenant toutes ces coordonnées. Si vous voulez visualiser spécifiquement les trajectoires générées vous pouvez lancer `Trajectoire_visu.m`.
 
-Ensuite, exécutez calcul_geometrie.m. Ce programme reprend les positions générées juste avant pour calculer les retards de propagation et les décalages Doppler théoriques. C'est une étape intermédiaire essentielle pour préparer le travail du processeur radar. Si vous voulez, vous pouvez lancer après le test unitaire `test_calcul_geometrie.m`. Ce dernier se place dans une situation simple : 1 seul satellite au-dessus du radar et compare les résultats obtenu avec ce qu'on devrait obtenir. Néanmoins, ce test écrase les donnés du fichier `donnees_scenario.mat`, donc après son exécution il faut relancer les programmes du début pour avancer dans la simulation.
+Ensuite, exécutez `calcul_geometrie.m`. Ce programme reprend les positions générées juste avant pour calculer les retards de propagation et les décalages Doppler théoriques. C'est une étape intermédiaire essentielle pour préparer le travail du processeur radar. Si vous voulez, vous pouvez lancer après le test unitaire `test_calcul_geometrie.m`. Ce dernier se place dans une situation simple : 1 seul satellite au-dessus du radar et compare les résultats obtenu avec ce qu'on devrait obtenir. Néanmoins, ce test écrase les donnés du fichier `donnees_scenario.mat`, donc après son exécution il faut relancer les programmes du début pour avancer dans la simulation.
 
 Une fois ces deux étapes de préparation terminées, il est possible de lancer `test_generation_signal.m`. C'est un script de validation qui permet de vérifier que la génération des signaux est réaliste avant de lancer la grosse simulation. Il va générer des graphiques comme celui ci-dessous :
 
 Ce test visuel est rassurant : on y voit à gauche la constellation QPSK propre du satellite source (le carré bleu), et à droite le signal mélangé reçu par l'antenne (le nuage rouge), qui montre bien que le signal utile est totalement noyé dans le bruit et les interférences des autres satellites. C'est tout le défi du traitement qui va suivre.
 
-Enfin, pour voir le radar en action, lancez main_simulation.m. C'est le chef d'orchestre qui va traiter le signal seconde par seconde, afficher les cartes de détection distance-Doppler et tracer la position de l'avion en temps réel.
+Enfin, pour voir le radar en action, `lancez main_simulation.m`. C'est le chef d'orchestre qui va traiter le signal seconde par seconde, afficher les cartes de détection distance-Doppler et tracer la position de l'avion en temps réel.
 
 **Explication des programmes non-mentionnés ci-dessus :**
 
