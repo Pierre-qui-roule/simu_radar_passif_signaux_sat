@@ -8,6 +8,8 @@ L'objectif ici est de modéliser une chaîne complète de détection radar passi
 
 Pour mieux saisir comment les différents scripts interagissent, voici le schéma global du fonctionnement de la simulation.
 
+![Architecture de la Simulation](.png)
+
 Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation où nous calculons toute la physique du scénario (la trajectoire de la cible et des satellites ainsi que que le calcul de la géométrie bistatique associée). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
 
 La seconde phase est le cœur du système : c'est la boucle de simulation temporelle. À chaque instant, nous générons les signaux électromagnétiques bruts (mélange des signaux satellites, échos, bruit thermique), puis nous les passons dans notre module de traitement du signal. Ce module effectue la synchronisation, le nettoyage des interférences via l'algorithme ECA, et enfin le calcul de la corrélation croisée (CAF) pour détecter la cible.
@@ -31,6 +33,8 @@ Vous devez commencer par lancer le script `Trajectoire.m`. Son rôle est de mett
 Ensuite, exécutez `calcul_geometrie.m`. Ce programme reprend les positions générées juste avant pour calculer les retards de propagation et les décalages Doppler théoriques. C'est une étape intermédiaire essentielle pour préparer le travail du processeur radar. Si vous voulez, vous pouvez lancer après le test unitaire `test_calcul_geometrie.m`. Ce dernier se place dans une situation simple : 1 seul satellite au-dessus du radar et compare les résultats obtenu avec ce qu'on devrait obtenir. Néanmoins, ce test écrase les donnés du fichier `donnees_scenario.mat`, donc après son exécution il faut relancer les programmes du début pour avancer dans la simulation. (Si ce programme renvoie une erreur stipulant qu'un fichier est manquant, il faut add to path le fichier `1_scenario_physique spécifiquement`)
 
 Une fois ces deux étapes de préparation terminées, il est possible de lancer `test_generation_signal.m`. C'est un script de validation qui permet de vérifier que la génération des signaux est réaliste avant de lancer la grosse simulation. Il va générer des graphiques comme celui ci-dessous :
+
+![Validation Signal](images/image_0a4b3e.png)
 
 Ce test visuel est rassurant : on y voit à gauche la constellation QPSK propre du satellite source (le carré bleu), et à droite le signal mélangé reçu par l'antenne (le nuage rouge), qui montre bien que le signal utile est totalement noyé dans le bruit et les interférences des autres satellites. C'est tout le défi du traitement qui va suivre.
 
