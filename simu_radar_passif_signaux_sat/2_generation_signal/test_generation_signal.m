@@ -87,7 +87,10 @@ subplot(2,2,3);
 plot(F/1e6, 10*log10(P1), 'b', 'LineWidth', 1.5); hold on;
 plot(F/1e6, 10*log10(P_mix), 'r'); 
 legend('Sat 1 Seul', 'Mélange (Normalisé)');
-title('Densité Spectrale (Forme)'); xlabel('MHz'); grid on;
+title('Densité Spectrale (Forme)'); 
+xlabel('Fréquence (MHz)');       
+ylabel('Puissance (dB)');        
+grid on;
 
 % 4. Amplitude Temporelle (Le test ultime)
 subplot(2,2,4);
@@ -96,6 +99,10 @@ idx_zoom = 100:200;
 plot(abs(S1(idx_zoom)) / std(S1), 'b', 'LineWidth', 1.5); hold on;
 plot(abs(S_melange(idx_zoom)) / std(S_melange), 'r');
 legend('Sat 1 (Stable)', 'Mélange (normalisé)');
-title('Amplitude Temporelle (Normalisée)'); grid on;
+title('Amplitude Temporelle (Normalisée)'); 
+xlabel('Temps (Échantillons)');  
+ylabel('Amplitude (Normalisée)');
+grid on;
+
 
 fprintf('--- TOUS LES TESTS SONT PASSÉS ---\n');
