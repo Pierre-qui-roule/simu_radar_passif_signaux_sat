@@ -30,7 +30,7 @@ La seconde phase est le cœur du système : c'est la boucle de simulation tempor
 * Nombre d'émetteurs : 5 satellites suivis simultanément pour la multilatération.
 * Bande passante du signal : 240 MHz.
 * Fréquence Porteuse : 11.7 GHz (Bande Ku).
-* Scénario de Puissance : Simulation d'une forte dynamique entre le trajet direct (atténuation 100 dB) et le trajet écho (atténuation 160 dB).
+* Scénario de Puissance : Simulation d'une forte dynamique entre le trajet direct (atténuation 100 dB) et le trajet écho (atténuation 140 dB).
 * Géométrie : Cible aérienne évoluant à une distance bistatique comprise entre 80 km et 150 km.
 
 **Installation et configuration**
