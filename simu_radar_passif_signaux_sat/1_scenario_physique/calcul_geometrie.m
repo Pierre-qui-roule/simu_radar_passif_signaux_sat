@@ -52,7 +52,7 @@ for iSat = 1:numSats
         R_SR = norm(r_R - r_S); % Sat -> Radar (Trajet Direct)
         
         % --- C. Calcul Retards (Tau) ---
-        % Le retard bistatique est la différence de temps par rapport au trajet direct
+        % Le retard bistatique = différence de temps par rapport au trajet direct
         % (C'est ce que mesure un radar passif synchronisé sur le direct)
         % Distance bistatique = (Sat->Cible + Cible->Radar) - (Sat->Radar)
         Dist_Bistatic = (R_ST + R_TR) - R_SR;
@@ -63,7 +63,7 @@ for iSat = 1:numSats
         Geom.Dist_Directe(k, iSat) = R_SR;
         Geom.Dist_Cible(k, iSat)   = R_ST + R_TR;
 
-        % --- D. Calcul Doppler Bistatique (Exact) ---
+        % --- D. Calcul Doppler Bistatique ---
         % Formule vectorielle : fd = -(1/lambda) * d(Dist_Bistatique)/dt
         
         % Vecteurs unitaires
@@ -93,7 +93,7 @@ end
 
 %% 4. Export
 save('donnees_geometrie.mat', 'Geom');
-fprintf('✅ Succès : Géométrie calculée et sauvegardée dans "donnees_geometrie.mat"\n');
+fprintf('Succès : Géométrie calculée et sauvegardée dans "donnees_geometrie.mat"\n');
 
 %% 5. Visualisation Rapide
 figure('Name', 'Analyse Géométrie Bistatique');
@@ -106,4 +106,5 @@ legend('Sat 1', 'Sat 2', 'Sat 3', 'Sat 4', 'Sat 5');
 subplot(2,1,2);
 plot(time, Geom.Doppler_Bistatic, 'LineWidth', 2);
 title('Fréquence Doppler Bistatique');
+
 ylabel('Doppler (Hz)'); xlabel('Temps (s)'); grid on;
