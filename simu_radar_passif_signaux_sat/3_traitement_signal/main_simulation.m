@@ -58,7 +58,7 @@ for k = indices_temps
             % ECA_Taps = 10, Mu = 0.8 (Agressif)
             [CAF_Propre, ~, ~] = traitement_signal(Sig_Ref, Sig_Surv, params.Fs, T_CPI, ones(size(Sig_Ref)), 20, 0.5, Max_Lag, Max_Dop);
             
-            % --- VISUALISATION 4 PANNEAUX (Votre demande) ---
+            % --- VISUALISATION 4 PANNEAUX ---
             set(0, 'CurrentFigure', fig_proc);
             
             % Graphe 1 : CAF "Sale" (Dominée par le Direct)
@@ -81,7 +81,7 @@ for k = indices_temps
             view(2); shading flat; colorbar;
             title('3. CAF Nettoyée (Avec ECA)'); ylabel('Dist (km)'); xlabel('Doppler (kHz)');
             
-            % --- Graphe 4 : Visualisation 3D (CORRIGÉ) ---
+            % --- Graphe 4 : Visualisation 3D ---
             subplot(2,2,4);
             
             % 1. On prépare les axes X et Y pour la 3D
@@ -102,7 +102,7 @@ for k = indices_temps
             colormap('jet');    
             colorbar;
             
-            % 4. Zoom vertical intelligent (Pour voir le pic et ignorer le fond)
+            % 4. Zoom vertical intelligent 
             max_val = max(CAF_Propre(:));
             zlim([max_val-60, max_val]); 
             
@@ -190,4 +190,5 @@ for k = indices_temps
     title(sprintf('Tracking (t=%.1f s)', t_actuel)); ylim([0 200]);
     drawnow;
 end
+
 
