@@ -13,7 +13,7 @@ function [iq_sig] = creerIQ_BB(N_samples, Fs, B_signal)
     symbs = exp(1j * (pi/4 + data_idx * pi/2));
     
     % 2. Filtrage de mise en forme (RRC)
-    % Esthétique spectrale pour ressembler à un vrai signal sat
+    % Pour ressembler à un vrai signal sat
     filter_span = 6; 
     beta = 0.2; % Roll-off
     h = rcosdesign(beta, filter_span, SPS, 'sqrt');
@@ -28,4 +28,5 @@ function [iq_sig] = creerIQ_BB(N_samples, Fs, B_signal)
     
     % Normalisation Puissance = 1 Watt (0 dBW)
     iq_sig = iq_sig / rms(iq_sig);
+
 end
