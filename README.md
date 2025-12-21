@@ -8,7 +8,7 @@ L'objectif ici est de modéliser une chaîne complète de détection radar passi
 
 Pour mieux saisir comment les différents scripts interagissent, voici le schéma global du fonctionnement de la simulation.
 
-![Architecture de la Simulation](.png)
+![Architecture de la Simulation](simu_radar_passif_signaux_sat/schéma_fonctionnement_simu.png)
 
 Comme illustré ci-dessus, le projet se divise en trois grandes phases logiques. Nous avons d'abord une phase de préparation où nous calculons toute la physique du scénario (la trajectoire de la cible et des satellites ainsi que que le calcul de la géométrie bistatique associée). Ces données sont sauvegardées et servent ensuite de base à la simulation principale.
 
