@@ -38,9 +38,12 @@ Enfin, pour voir le radar en action, `lancez main_simulation.m`. C'est le chef d
 
 **Explication des programmes non-mentionnés ci-dessus :**
 
-`creerIQ_BB.m`
-`creerSignal_BB.m`
-`generer_scene_complete.m`
-`traitement_signal.m`
+`creerIQ_BB.m` est chargé de fabriquer la source numérique pure du signal satellite avant son émission. Il génère une suite de données aléatoires qu'il module en format QPSK puis filtre pour obtenir une forme d'onde réaliste et respectant la bande passante définie. Son utilité est de fournir une référence parfaite, ou empreinte digitale, que le radar cherchera ensuite à détecter.
+
+`creerSignal_BB.m` simule physiquement le voyage de l'onde électromagnétique dans l'espace pour un trajet donné. Elle prend le signal source et le modifie mathématiquement en lui appliquant un retard temporel précis, un décalage fréquentiel dû à l'effet Doppler et une atténuation de puissance. Elle est essentielle pour distinguer le trajet direct court et puissant du trajet écho long et faible réfléchi par la cible.
+
+`generer_scene_complete.m` assemble l'environnement électromagnétique global que reçoit l'antenne de surveillance à un instant précis. Il boucle sur tous les satellites visibles pour additionner leurs signaux directs, leurs échos sur la cible et ajoute par-dessus un bruit de fond thermique. C'est lui qui crée le défi technique en noyant le signal utile de l'avion sous une masse d'interférences et de bruit.
+
+`traitement_signal.m` constitue le cerveau du radar qui analyse les données reçues pour extraire l'information. Il réalise successivement la compensation de la vitesse du satellite, le nettoyage du signal direct via le filtre ECA et enfin le calcul de la corrélation croisée. Son rôle final est de produire une carte en deux dimensions où l'énergie de la cible ressort sous forme d'un pic visible, indiquant sa distance et sa vitesse.
 
 
