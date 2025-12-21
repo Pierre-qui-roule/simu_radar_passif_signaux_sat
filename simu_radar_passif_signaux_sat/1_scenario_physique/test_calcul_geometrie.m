@@ -47,7 +47,7 @@ end
 load('donnees_geometrie.mat'); % Charge les résultats 'Geom'
 load('donnees_scenario.mat');  % Re-charge 'env_data' pour récupérer c, Re, etc.
 
-% --- RE-DÉFINITION DES PARAMÈTRES DU TEST (Car 'clear' les a tués) ---
+% --- RE-DÉFINITION DES PARAMÈTRES DU TEST (Car 'clear' les a supprimés) ---
 H_sat = 1000e3;
 Dist_RT = 300e3;
 D_direct = H_sat;
@@ -66,9 +66,9 @@ fprintf('Retard Théorique   : %.9f s\n', Tau_Theorique);
 fprintf('Retard Calculé     : %.9f s\n', Tau_Calcule);
 
 if Erreur_Tau < 1e-9
-    fprintf('✅ TEST RETARD : SUCCÈS\n');
+    fprintf('TEST RETARD : SUCCÈS\n');
 else
-    fprintf('❌ TEST RETARD : ÉCHEC (Erreur = %e s)\n', Erreur_Tau);
+    fprintf('TEST RETARD : ÉCHEC (Erreur = %e s)\n', Erreur_Tau);
 end
 
 % --- B. TEST DU DOPPLER ---
@@ -86,8 +86,9 @@ fprintf('\nDoppler Théorique : %.2f Hz\n', Dop_Theorique);
 fprintf('Doppler Calculé   : %.2f Hz\n', Dop_Calcule);
 
 if Erreur_Dop < 1e-3
-    fprintf('✅ TEST DOPPLER : SUCCÈS\n');
+    fprintf('TEST DOPPLER : SUCCÈS\n');
 else
-    fprintf('❌ TEST DOPPLER : ÉCHEC\n');
+    fprintf('TEST DOPPLER : ÉCHEC\n');
 end
+
 fprintf('=========================================\n');
